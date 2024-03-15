@@ -1,6 +1,9 @@
 ---
 title: "Getting used to R"
 bibliography: ../references.bib
+editor: 
+  markdown: 
+    wrap: 72
 ---
 
 <!-- COMMENT NOT SHOW IN ANY OUTPUT: Code chunk below sets overall defaults for .qmd file; these inlcude showing output by default and looking for files relative to .Rpoj file, not .qmd file, which makes putting filesin different folders easier  -->
@@ -14,9 +17,10 @@ knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 
 The focus of this overview is to get you used to tools we will be using
 in class. Before completing it you should have a basic understanding of
-using R. We will do an introduction in class [(download help file)](../Primer_material/R_primer.R). 
-You should also be comfortable using Rstudio and github
-[(see help file)](../Primer_material/Tools_overview.qmd).
+using R. We will do an introduction in class [(download help
+file)](../Primer_material/R_primer.R). You should also be comfortable
+using Rstudio and github [(see help
+file)](../Primer_material/Tools_overview.qmd).
 
 #### Rmd basics
 
@@ -118,7 +122,8 @@ What does it return?
 
 Determine what the ":" does! Complete the following sentence:
 
-The : means FILL THIS IN.
+The : means **to make a list from the bottom number to the top number
+that includes all integers in the interval**.
 
 #### 2
 
@@ -126,18 +131,60 @@ Now try to guess the output of these commands
 
 -   length(x)
 -   max(x)
--   x[x \< 10]
+-   x\[x \< 10\]
 -   x\^2
--   x[ x \< 12 & x \> 7]
+-   x\[ x \< 12 & x \> 7\]
 
 INSERT AN R CHUNK HERE AND RUN EACH OF THESE COMMANDS. Add a new chunk
 by clicking the *Insert Chunk* button on the toolbar or by pressing
 *Ctrl+Alt+I*. Then state what each of these does.
 
+```{r}
+
+length(x)
+max(x)
+x[x < 10]
+x^2
+x[x < 12 & x > 7]
+```
+
+-   length(x) returns the number of elements in x
+
+-   max(x) returns the greatest value in x
+
+-   x\[x \< 10\] returns all values of x less than 10 (it segments the
+    array based on the condition)
+
+-   x\^2 returns the values of x, but squared
+
+-   x\[x \< 12 & x \> 7\] applies two conditions to x, returning all
+    values of x less than 12 and greater than 7 (segmentation based on
+    two conditions)
+
 #### 3
 
-Is `-1:2` the same as `(-1):2` or `-(1:2)`? INSERT AN R CHUNK HERE
-    AND RUN EACH OF THESE COMMANDS. Then state what each of these does.
+Is `-1:2` the same as `(-1):2` or `-(1:2)`? INSERT AN R CHUNK HERE AND
+RUN EACH OF THESE COMMANDS. Then state what each of these does.
+
+```{r}
+-1:2
+```
+
+-   -1:2 generates a sequence from -1 to 2, with a step size of 1
+
+```{r}
+(-1):2
+```
+
+-   (-1):2 generates a sequence from -1 to 2, with a step size of 1 (the
+    same as -1:2)
+
+```{r}
+-(1:2)
+```
+
+-   -(1:2) generates a sequence from 1 to 2, with a step size of 1, and
+    then applies a negative to all values in that sequence
 
 ### Data input, plotting, and tests
 
@@ -155,22 +202,72 @@ Info on the dataset is viewable \@
 
 #### 4
 
-How many rows does the **sleep** data set have (hint: `?dim`)? What
-    kind of data is stored in each variable?
+How many rows does the **sleep** data set have (hint: `?dim`)? What kind
+of data is stored in each variable?
 
 ENTER ANSWERS HERE. ADD ANY R CHUNKS YOU USED TO FIND THE ANSWER.
+
+```{r}
+dim(sleep)
+```
+
+```{r}
+dim(sleep)[1]
+```
+
+-   The **sleep** data set has 62 rows
+
+```{r}
+str(sleep)
+```
+
+-   In each variable, the following data types are stored in each
+    variable (format is variable (data type):
+
+    -   Species (factor)
+
+    -   BodyWt (num)
+
+    -   BrainWt (num)
+
+    -   NonDreaming (num)
+
+    -   Dreaming (num)
+
+    -   TotalSleep (num)
+
+    -   LifeSpan (num)
+
+    -   Gestation (num)
+
+    -   Predation (int)
+
+    -   Exposure (int)
+
+    -   Danger (int)
+
+    -   Primate (factor)
 
 #### 5
 
 Change the column named *BodyWt* to *Body_weight*"\* in the sleep
-    dataset.
+dataset.
 
 ADD ANY R CHUNKS YOU USED TO COMPLETE THE TASK.
 
+```{r}
+names(sleep)[names(sleep) %in% "BodyWt"] <- "Body_weight"
+```
+
+```{r}
+# Check if proper changes were made
+str(sleep)
+```
+
 #### 6
 
-Produce a plot of how *TotalSleep* differs between primates and
-    other species. What is this plot showing?
+Produce a plot of how *TotalSleep* differs between primates and other
+species. What is this plot showing?
 
 Note, as of early 2020 R no longer reads in strings as factors! This
 means the Primate column, which is full of "Yes"s and "No"s, reads in as
@@ -200,18 +297,61 @@ plot(BodyWt ~ factor(Primate), data = sleep)
 NOTE YOU CAN ADD A PLOT TO THE DOCUMENT TOO! AMEND THE BELOW AS NEEDED.
 
 ```{r}
-plot(cars)
+plot(sleep)
 ```
+
+```{r}
+plot(TotalSleep ~ Primate, sleep)
+```
+
+```{r}
+plot(TotalSleep ~ factor(Primate), sleep, main = "Variance in sleep differs between primates and non-primates", 
+     xlab = "Primate", ylab = "Total sleep (hours)")
+```
+
+-   The plots (both unlabeled and labeled) show how the variance in
+    sleep differs between primates and non-primates
 
 #### 7
 
 The **sleep** dataset begs to have a linear model fit for it. Let's
-    consider. First plot how *TotalSleep* is explained by *BrainWt*. Are
-    there any issues with the data? Exclude any outlier and fit a linear
-    model to obtain the p-value for the model (hint: summary()). What
-    does this imply?
+consider. First plot how *TotalSleep* is explained by *BrainWt*. Are
+there any issues with the data? Exclude any outlier and fit a linear
+model to obtain the p-value for the model (hint: summary()). What does
+this imply?
 
 ENTER ANSWERS HERE. ADD ANY R CHUNKS YOU USED TO FIND THE ANSWER.
+
+```{r}
+plot(TotalSleep ~ BrainWt, sleep)
+```
+
+-   The issue in the data is that there are outliers (indicated by the
+    isolated dots at the right-end of the plot)
+
+    -   Outliers can skew data and provide inaccurate representations of
+        the data, so it's important to remove outliers before proceeding
+        with any further analyses
+
+```{r}
+sleep_fit <- lm(TotalSleep ~ BrainWt, sleep[sleep$BrainWt<1000,])
+summary(sleep_fit)
+```
+
+-   The code above removes the outliers (any BrainWt \> 1000 is removed)
+
+-   The p-value is 0.0002782, which is lower than 0.05 and thus
+    indicates a statistically significant relationship between brain
+    weight and total hours of sleep in this data set
+
+```{r}
+plot(TotalSleep ~ BrainWt, data = sleep[sleep$BrainWt <  1000, ])
+abline(sleep_fit)
+```
+
+-   Adding in a trend line shows that there is a negative relationship
+    between brain weight and total sleep: as brain weight increases, a
+    species sleeps for fewer hours
 
 ### EXTRA QUESTIONS
 
@@ -224,15 +364,14 @@ text](https://upload.wikimedia.org/wikipedia/commons/9/94/Puffin_Mrkoww.jpg)
 
 #### 8
 
-Sometimes data doesn't have headers (column names),so you have to
-    add them. Download a dataset on alcids (birds like puffins and
-    auklets) from
-    <https://raw.githubusercontent.com/jsgosnell/CUNY-BioStats/master/datasets/alcids55.csv>.\
-    You'll need to modify the read.csv function by specifying
-    `header = False`, then use the `names` function to name the columns
-    ["year", "a1_abund", "NAO", "a2_abund", "a3_abund", "a4_abund",
-    "a5_abund", "a6_abund"]. Try it and check your input using the
-    `head` command.
+Sometimes data doesn't have headers (column names),so you have to add
+them. Download a dataset on alcids (birds like puffins and auklets) from
+<https://raw.githubusercontent.com/jsgosnell/CUNY-BioStats/master/datasets/alcids55.csv>.\
+You'll need to modify the read.csv function by specifying
+`header = False`, then use the `names` function to name the columns
+\["year", "a1_abund", "NAO", "a2_abund", "a3_abund", "a4_abund",
+"a5_abund", "a6_abund"\]. Try it and check your input using the `head`
+command.
 
 ENTER ANSWERS HERE. ADD ANY R CHUNKS YOU USED TO FIND THE ANSWER.
 
